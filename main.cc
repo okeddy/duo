@@ -1,25 +1,25 @@
-#include <iostream>
-#include <vector>
-#include "thread/Thread.h"
-#include <boost/bind.hpp>
+#include "thread/Mutex.h"
 
-using namespace std;
+class Request
+{
+ public:
+  void process() // __attribute__ ((noinline))
+  {
+    duo::MutexLockGuard lock(mutex_);
+    print();
+  }
 
-void func(int num, const char* str) {
-    for (size_t i = 0; i < num; i++)
-    {
-        cout << str << endl;
-        sleep(1);
-    }
-}
+  void print() const // __attribute__ ((noinline))
+  {
+    duo::MutexLockGuard lock(mutex_);
+  }
 
-int main() {
-    duo::Thread t1(boost::bind(func, 3, "This is five!"), "Thread 1");
-    t1.start();
-    duo::Thread t2(boost::bind(func, 3, "This is two!"), "Thread 2");
-    t2.start();
-    t1.join();
-    t2.join();
+ private:
+  mutable duo::MutexLock mutex_;
+};
 
-    return 0;
+int main()
+{
+  Request req;
+  req.process();
 }
