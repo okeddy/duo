@@ -1,30 +1,35 @@
-#include "thread/Exception.h"
+#include "thread/ThreadPool.h"
+#include "thread/CountDownLatch.h"
+
+#include <boost/bind.hpp>
 #include <stdio.h>
 
-class Bar
+void print()
 {
-public:
-    void test()
-    {
-        throw duo::Exception("oops");
-    }
-};
+    printf("tid=%d\n", duo::CurrentThread::tid());
+}
 
-void foo()
+void printString(const std::string &str)
 {
-    Bar b;
-    b.test();
+    printf("tid=%d, str=%s\n", duo::CurrentThread::tid(), str.c_str());
 }
 
 int main()
 {
-    try
+    duo::ThreadPool pool("MainThreadPool");
+    pool.start(5);
+
+    pool.run(print);
+    pool.run(print);
+    for (int i = 0; i < 100; ++i)
     {
-        foo();
+        char buf[32];
+        snprintf(buf, sizeof buf, "task %d", i);
+        pool.run(boost::bind(printString, std::string(buf)));
     }
-    catch (const duo::Exception &ex)
-    {
-        printf("reason: %s\n", ex.what());
-        printf("stack trace: %s\n", ex.stackTrace());
-    }
+
+    duo::CountDownLatch latch(1);
+    pool.run(boost::bind(&duo::CountDownLatch::countDown, &latch));
+    latch.wait();
+    pool.stop();
 }

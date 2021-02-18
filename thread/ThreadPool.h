@@ -12,13 +12,13 @@
 #include <deque>
 
 namespace duo {
-    class ThreadPoll : boost::noncopyable
+    class ThreadPool : boost::noncopyable
     {
     public:
         typedef boost::function<void ()> Task;
 
-        explicit ThreadPoll(const std::string& name = std::string());
-        ~ThreadPoll();
+        explicit ThreadPool(const std::string& name = std::string());
+        ~ThreadPool();
 
         void start(int numThreads);
         void stop();

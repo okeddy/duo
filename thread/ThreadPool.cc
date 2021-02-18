@@ -7,20 +7,20 @@
 
 using namespace duo;
 
-ThreadPoll::ThreadPoll(const std::string& name)
+ThreadPool::ThreadPool(const std::string& name)
     : mutex_(),
       cond_(mutex_),
       name_(name),
       running_(false)
 { }
 
-ThreadPoll::~ThreadPoll() {
+ThreadPool::~ThreadPool() {
     if (running_) {
         stop();
     }
 }
 
-void ThreadPoll::start(int numThreads) {
+void ThreadPool::start(int numThreads) {
     assert(threads_.empty());
     running_ = true;
     threads_.reserve(numThreads);
@@ -29,19 +29,19 @@ void ThreadPoll::start(int numThreads) {
         char id[32];
         snprintf(id, sizeof id, "%d", i);
         threads_.push_back(new duo::Thread(
-            boost::bind(&ThreadPoll::runInThread, this), name_ + id));
+            boost::bind(&ThreadPool::runInThread, this), name_ + id));
         threads_[i].start();
     }
 }
 
-void ThreadPoll::stop() {
+void ThreadPool::stop() {
     running_ = false;
     cond_.notifyAll();
     for_each(threads_.begin(), threads_.end(), 
         boost::bind(&duo::Thread::join, _1));
 }
 
-void ThreadPoll::run(const Task& task) {
+void ThreadPool::run(const Task& task) {
     if (threads_.empty()) {
         task();
     } else {
@@ -51,7 +51,7 @@ void ThreadPoll::run(const Task& task) {
     }
 }
 
-ThreadPoll::Task ThreadPoll::take() {
+ThreadPool::Task ThreadPool::take() {
     MutexLockGuard lock(mutex_);
 
     while (queue_.empty() && running_) {
@@ -67,7 +67,7 @@ ThreadPoll::Task ThreadPoll::take() {
     return task;
 }
 
-void ThreadPoll::runInThread() {
+void ThreadPool::runInThread() {
     try {
         while (running_) {
             Task task(take());
