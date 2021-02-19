@@ -3,7 +3,7 @@
 * All rights reserved.
 *
 * 文件名称：filename.h
-* 摘 要：
+* 摘 要：主函数文件
 *
 * 当前版本：1.0
 * 作 者：kd

@@ -4,8 +4,8 @@ project(duo)
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall")
 
-add_subdirectory(../thread thread.out)
+add_subdirectory(../base base.out)
 
 add_executable(duo ThreadLocal_test.cc)
 
-target_link_libraries(duo thread pthread)
+target_link_libraries(duo duo_base pthread)
