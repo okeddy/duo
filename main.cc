@@ -1,35 +1,23 @@
-#include "thread/ThreadPool.h"
-#include "thread/CountDownLatch.h"
+#include <iostream>
+#include <vector>
 
-#include <boost/bind.hpp>
-#include <stdio.h>
+using namespace std;
 
-void print()
-{
-    printf("tid=%d\n", duo::CurrentThread::tid());
-}
-
-void printString(const std::string &str)
-{
-    printf("tid=%d, str=%s\n", duo::CurrentThread::tid(), str.c_str());
+int longestOnes(vector<int>& A, int K) {
+    int left = 0, zeros = 0, ret = 0;
+    int n = A.size();
+    for (int right = 0; right < n; right++) {
+        if (A[right] == 0) ++zeros;
+        while (zeros > K) {
+            if (A[left++] == 0) --zeros;
+        }
+        ret = max(ret, right - left + 1);
+    }
+    return ret;
 }
 
 int main()
 {
-    duo::ThreadPool pool("MainThreadPool");
-    pool.start(5);
-
-    pool.run(print);
-    pool.run(print);
-    for (int i = 0; i < 100; ++i)
-    {
-        char buf[32];
-        snprintf(buf, sizeof buf, "task %d", i);
-        pool.run(boost::bind(printString, std::string(buf)));
-    }
-
-    duo::CountDownLatch latch(1);
-    pool.run(boost::bind(&duo::CountDownLatch::countDown, &latch));
-    latch.wait();
-    pool.stop();
+    vector<int> arr = { 1,1,1,0,0,0,1,1,1,1,0 };
+    cout << longestOnes(arr, 2);
 }

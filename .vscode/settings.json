@@ -8,5 +8,6 @@
     "C_Cpp.vcFormat.newLine.beforeOpenBrace.lambda": "sameLine",
     "C_Cpp.vcFormat.newLine.beforeOpenBrace.namespace": "sameLine",
     "C_Cpp.vcFormat.newLine.beforeOpenBrace.type": "sameLine",
-    "C_Cpp.vcFormat.space.betweenEmptyBraces": true
+    "C_Cpp.vcFormat.space.betweenEmptyBraces": true,
+    "python.pythonPath": "/usr/bin/python3.6"
 }
