@@ -22,4 +22,5 @@ for root,dirs,files in os.walk('.'):
                 if file != '/*\n':
                     f.seek(0, 0)
                     file = f.read()
+                    f.seek(0, 0)
                     f.write(context + file)

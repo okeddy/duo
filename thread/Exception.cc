@@ -1,3 +1,15 @@
+/*
+* Copyright (c) 2021, kd.
+* All rights reserved.
+*
+* 文件名称：filename.h
+* 摘 要：
+*
+* 当前版本：1.0
+* 作 者：kd
+* 完成日期：2021年2月19日
+*/
+
 #include "Exception.h"
 
 #include <cxxabi.h>
