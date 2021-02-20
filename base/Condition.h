@@ -2,7 +2,7 @@
 * Copyright (c) 2021, kd.
 * All rights reserved.
 *
-* 文件名称：filename.h
+* 文件名称：Condition.h
 * 摘 要：
 *
 * 当前版本：1.0
@@ -20,8 +20,7 @@
 #include <errno.h>
 
 namespace duo {
-    class Condition : boost::noncopyable
-    {
+    class Condition : boost::noncopyable {
     public:
         explicit Condition(MutexLock& mutex) : mutex_(mutex) {
             pthread_cond_init(&pcond_, NULL);
@@ -37,7 +36,7 @@ namespace duo {
 
         bool waitForSeconds(int seconds) {
             struct timespec abstime;
-            
+
             clock_gettime(CLOCK_REALTIME, &abstime);
             abstime.tv_sec += seconds;
             return ETIMEDOUT ==
@@ -51,7 +50,7 @@ namespace duo {
         void notifyAll() {
             pthread_cond_broadcast(&pcond_);
         }
-        
+
     private:
         MutexLock& mutex_;
         pthread_cond_t pcond_;

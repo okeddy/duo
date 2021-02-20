@@ -2,7 +2,7 @@
 * Copyright (c) 2021, kd.
 * All rights reserved.
 *
-* 文件名称：filename.h
+* 文件名称：ThreadPool.h
 * 摘 要：
 *
 * 当前版本：1.0
@@ -24,10 +24,9 @@
 #include <deque>
 
 namespace duo {
-    class ThreadPool : boost::noncopyable
-    {
+    class ThreadPool : boost::noncopyable {
     public:
-        typedef boost::function<void ()> Task;
+        typedef boost::function<void()> Task;
 
         explicit ThreadPool(const std::string& name = std::string());
         ~ThreadPool();

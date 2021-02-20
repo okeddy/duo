@@ -2,7 +2,7 @@
 * Copyright (c) 2021, kd.
 * All rights reserved.
 *
-* 文件名称：filename.h
+* 文件名称：Thread.cc
 * 摘 要：
 *
 * 当前版本：1.0
@@ -38,8 +38,7 @@ namespace duo {
         duo::CurrentThread::t_threadName = "main";
     }
 
-    class ThreadNameInitializer
-    {
+    class ThreadNameInitializer {
     public:
         ThreadNameInitializer() {
             duo::CurrentThread::t_threadName = "main";
@@ -56,12 +55,12 @@ namespace duo {
         boost::weak_ptr<pid_t> wkTid_;
 
         ThreadDate(const ThreadFunc& func,
-                   const std::string& name,
-                   const boost::shared_ptr<pid_t>& tid)
+            const std::string& name,
+            const boost::shared_ptr<pid_t>& tid)
             : func_(func),
-              name_(name),
-              wkTid_(tid)
-        { }
+            name_(name),
+            wkTid_(tid) {
+        }
 
         void runTnThread() {
             pid_t tid = duo::CurrentThread::tid();
@@ -78,7 +77,7 @@ namespace duo {
             duo::CurrentThread::t_threadName = "finished";
         }
     };
-    
+
     void* startThread(void* obj) {
         ThreadDate* data = static_cast<ThreadDate*>(obj);
         data->runTnThread();
@@ -108,11 +107,11 @@ AtomicInt32 Thread::numCreated_;
 
 Thread::Thread(const ThreadFunc& func, const std::string& name)
     : started_(false),
-      joined_(false),
-      pthreadId_(0),
-      tid_(new pid_t(0)),
-      func_(func),
-      name_(name) {
+    joined_(false),
+    pthreadId_(0),
+    tid_(new pid_t(0)),
+    func_(func),
+    name_(name) {
     numCreated_.increment();
 }
 

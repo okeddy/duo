@@ -2,7 +2,7 @@
 * Copyright (c) 2021, kd.
 * All rights reserved.
 *
-* 文件名称：filename.h
+* 文件名称：ThreadLocal.h
 * 摘 要：
 *
 * 当前版本：1.0
@@ -18,8 +18,7 @@
 
 namespace duo {
     template<typename T>
-    class ThreadLocal : boost::noncopyable
-    {
+    class ThreadLocal : boost::noncopyable {
     public:
         ThreadLocal() {
             pthread_key_create(&pkey_, &ThreadLocal::destructor);
@@ -40,7 +39,7 @@ namespace duo {
         }
 
     private:
-        static void destructor(void *x) {
+        static void destructor(void* x) {
             T* obj = static_cast<T*>(x);
             delete obj;
         }

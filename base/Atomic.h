@@ -2,7 +2,7 @@
 * Copyright (c) 2021, kd.
 * All rights reserved.
 *
-* 文件名称：filename.h
+* 文件名称：Atomic.h
 * 摘 要：
 *
 * 当前版本：1.0
@@ -19,12 +19,11 @@
 namespace duo {
     namespace detail {
         template<typename T>
-        class AtomicIntegerT : boost::noncopyable
-        {
+        class AtomicIntegerT : boost::noncopyable {
         private:
             volatile T value_;
         public:
-            AtomicIntegerT() : value_(0) {}
+            AtomicIntegerT() : value_(0) { }
 
             T get() const {
                 return __sync_val_compare_and_swap(const_cast<volatile T*>(&value_), 0, 0);

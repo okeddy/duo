@@ -2,7 +2,7 @@
 * Copyright (c) 2021, kd.
 * All rights reserved.
 *
-* 文件名称：filename.h
+* 文件名称：BoundedBlockingQueue.h
 * 摘 要：
 *
 * 当前版本：1.0
@@ -22,24 +22,22 @@
 
 namespace duo {
     template<typename T>
-    class BoundedBlockingQueue : boost::noncopyable
-    {
+    class BoundedBlockingQueue : boost::noncopyable {
     public:
         explicit BoundedBlockingQueue(int max_size)
-            :   mutex_(),
-                notFull_(mutex_),
-                notEmpty_(mutex_),
-                queue_(max_size)
-        { }
+            : mutex_(),
+            notFull_(mutex_),
+            notEmpty_(mutex_),
+            queue_(max_size) {
+        }
 
         void put(const T& x) {
             MutexLockGuard lock(mutex_);
 
-            while (queue_.full())
-            {
+            while (queue_.full()) {
                 notFull_.wait();
             }
-            
+
             assert(!queue_.full());
             queue_.push_back(x);
             notEmpty_.notify();
@@ -48,11 +46,10 @@ namespace duo {
         T take() {
             MutexLockGuard lock(mutex_);
 
-            while (queue_.empty())
-            {
+            while (queue_.empty()) {
                 notEmpty_.wait();
             }
-            
+
             assert(!queue_.empty());
             T front(queue_.front());
             queue_.pop_front();

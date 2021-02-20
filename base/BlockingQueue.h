@@ -2,7 +2,7 @@
 * Copyright (c) 2021, kd.
 * All rights reserved.
 *
-* 文件名称：filename.h
+* 文件名称：BlockingQueue.h
 * 摘 要：
 *
 * 当前版本：1.0
@@ -22,14 +22,13 @@
 
 namespace duo {
     template<typename T>
-    class BlockingQueue : boost::noncopyable
-    {
+    class BlockingQueue : boost::noncopyable {
     public:
         BlockingQueue()
-            :   mutex_(),
-                notEmpty_(mutex_),
-                queue_()
-        { }
+            : mutex_(),
+            notEmpty_(mutex_),
+            queue_() {
+        }
 
         void put(const T& x) {
             MutexLockGuard lock(mutex_);
@@ -41,11 +40,10 @@ namespace duo {
             MutexLockGuard lock(mutex_);
 
             // always use a while-loop, due to spurious wakeup
-            while (queue_.empty())
-            {
+            while (queue_.empty()) {
                 notEmpty_.wait();
             }
-            
+
             assert(!queue_.empty());
             T front(queue_.front());
             queue_.pop_front();

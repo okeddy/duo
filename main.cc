@@ -2,34 +2,42 @@
 * Copyright (c) 2021, kd.
 * All rights reserved.
 *
-* 文件名称：filename.h
-* 摘 要：主函数文件
+* 文件名称：main.cc
+* 摘 要：
 *
 * 当前版本：1.0
 * 作 者：kd
 * 完成日期：2021年2月19日
 */
 
-#include <iostream>
-#include <vector>
+#include "base/ThreadPool.h"
+#include "base/CountDownLatch.h"
 
-using namespace std;
+#include <boost/bind.hpp>
+#include <stdio.h>
 
-int longestOnes(vector<int>& A, int K) {
-    int left = 0, zeros = 0, ret = 0;
-    int n = A.size();
-    for (int right = 0; right < n; right++) {
-        if (A[right] == 0) ++zeros;
-        while (zeros > K) {
-            if (A[left++] == 0) --zeros;
-        }
-        ret = max(ret, right - left + 1);
-    }
-    return ret;
+void print() {
+    printf("tid=%d\n", duo::CurrentThread::tid());
 }
 
-int main()
-{
-    vector<int> arr = { 1,1,1,0,0,0,1,1,1,1,0 };
-    cout << longestOnes(arr, 2);
+void printString(const std::string& str) {
+    printf("tid=%d, str=%s\n", duo::CurrentThread::tid(), str.c_str());
+}
+
+int main() {
+    duo::ThreadPool pool("MainThreadPool");
+    pool.start(5);
+
+    pool.run(print);
+    pool.run(print);
+    for (int i = 0; i < 100; ++i) {
+        char buf[32];
+        snprintf(buf, sizeof buf, "task %d", i);
+        pool.run(boost::bind(printString, std::string(buf)));
+    }
+
+    duo::CountDownLatch latch(1);
+    pool.run(boost::bind(&duo::CountDownLatch::countDown, &latch));
+    latch.wait();
+    pool.stop();
 }

@@ -2,7 +2,7 @@
 * Copyright (c) 2021, kd.
 * All rights reserved.
 *
-* 文件名称：filename.h
+* 文件名称：ThreadPool.cc
 * 摘 要：
 *
 * 当前版本：1.0
@@ -21,10 +21,10 @@ using namespace duo;
 
 ThreadPool::ThreadPool(const std::string& name)
     : mutex_(),
-      cond_(mutex_),
-      name_(name),
-      running_(false)
-{ }
+    cond_(mutex_),
+    name_(name),
+    running_(false) {
+}
 
 ThreadPool::~ThreadPool() {
     if (running_) {
@@ -36,7 +36,7 @@ void ThreadPool::start(int numThreads) {
     assert(threads_.empty());
     running_ = true;
     threads_.reserve(numThreads);
-    
+
     for (int i = 0; i < numThreads; ++i) {
         char id[32];
         snprintf(id, sizeof id, "%d", i);
@@ -49,14 +49,15 @@ void ThreadPool::start(int numThreads) {
 void ThreadPool::stop() {
     running_ = false;
     cond_.notifyAll();
-    for_each(threads_.begin(), threads_.end(), 
+    for_each(threads_.begin(), threads_.end(),
         boost::bind(&duo::Thread::join, _1));
 }
 
 void ThreadPool::run(const Task& task) {
     if (threads_.empty()) {
         task();
-    } else {
+    }
+    else {
         MutexLockGuard lock(mutex_);
         queue_.push_back(task);
         cond_.notify();
@@ -69,7 +70,7 @@ ThreadPool::Task ThreadPool::take() {
     while (queue_.empty() && running_) {
         cond_.wait();
     }
-    
+
     Task task;
     if (!queue_.empty()) {
         task = queue_.front();
@@ -87,16 +88,19 @@ void ThreadPool::runInThread() {
                 task();
             }
         }
-    } catch(const Exception& ex) {
+    }
+    catch (const Exception& ex) {
         fprintf(stderr, "exception caught in ThreadPool %s\n", name_.c_str());
         fprintf(stderr, "reason: %s\n", ex.what());
         fprintf(stderr, "stack trace: %s\n", ex.stackTrace());
         abort();
-    } catch(const std::exception& ex) {
+    }
+    catch (const std::exception& ex) {
         fprintf(stderr, "exception caught in ThreadPool %s\n", name_.c_str());
         fprintf(stderr, "reason: %s\n", ex.what());
         abort();
-    } catch (...) {
+    }
+    catch (...) {
         fprintf(stderr, "unknown exception caught in ThreadPool %s\n", name_.c_str());
         abort();
     }

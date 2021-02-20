@@ -2,7 +2,7 @@
 * Copyright (c) 2021, kd.
 * All rights reserved.
 *
-* 文件名称：filename.h
+* 文件名称：CountDownLatch.h
 * 摘 要：
 *
 * 当前版本：1.0
@@ -19,20 +19,18 @@
 #include <boost/noncopyable.hpp>
 
 namespace duo {
-    class CountDownLatch : boost::noncopyable
-    {
+    class CountDownLatch : boost::noncopyable {
     public:
         explicit CountDownLatch(int count)
-            :   mutex_(),
-                condition_(mutex_),
-                count_(count)
-        { }
+            : mutex_(),
+            condition_(mutex_),
+            count_(count) {
+        }
 
         void wait() {
             MutexLockGuard lock(mutex_);
 
-            while (count_ > 0)
-            {
+            while (count_ > 0) {
                 condition_.wait();
             }
         }

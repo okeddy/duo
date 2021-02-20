@@ -2,7 +2,7 @@
 * Copyright (c) 2021, kd.
 * All rights reserved.
 *
-* 文件名称：filename.h
+* 文件名称：Thread.h
 * 摘 要：
 *
 * 当前版本：1.0

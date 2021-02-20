@@ -2,7 +2,7 @@
 * Copyright (c) 2021, kd.
 * All rights reserved.
 *
-* 文件名称：filename.h
+* 文件名称：ThreadLocal_test.cc
 * 摘 要：
 *
 * 当前版本：1.0
@@ -10,8 +10,8 @@
 * 完成日期：2021年2月19日
 */
 
-#include "../thread/ThreadLocal.h"
-#include "../thread/Thread.h"
+#include "../base/ThreadLocal.h"
+#include "../base/Thread.h"
 
 #include <boost/noncopyable.hpp>
 #include <stdio.h>

@@ -2,7 +2,7 @@
 * Copyright (c) 2021, kd.
 * All rights reserved.
 *
-* 文件名称：filename.h
+* 文件名称：Exception.h
 * 摘 要：
 *
 * 当前版本：1.0
@@ -17,8 +17,7 @@
 #include <string>
 
 namespace duo {
-    class Exception : public std::exception
-    {
+    class Exception : public std::exception {
     public:
         explicit Exception(const char* what);
         virtual ~Exception() throw();

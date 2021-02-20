@@ -2,7 +2,7 @@
 * Copyright (c) 2021, kd.
 * All rights reserved.
 *
-* 文件名称：filename.h
+* 文件名称：Mutex.h
 * 摘 要：
 *
 * 当前版本：1.0
@@ -20,8 +20,7 @@
 #include <pthread.h>
 
 namespace duo {
-    class MutexLock : boost::noncopyable
-    {
+    class MutexLock : boost::noncopyable {
     public:
         MutexLock() : holder_(0) {
             pthread_mutex_init(&mutex_, NULL);
@@ -59,19 +58,18 @@ namespace duo {
         pid_t holder_;
     };
 
-    class MutexLockGuard : boost::noncopyable
-    {
-        public:
-            explicit MutexLockGuard(MutexLock& mutex) : mutex_(mutex) {
-                mutex_.lock();
-            }
+    class MutexLockGuard : boost::noncopyable {
+    public:
+        explicit MutexLockGuard(MutexLock& mutex) : mutex_(mutex) {
+            mutex_.lock();
+        }
 
-            ~MutexLockGuard() {
-                mutex_.unlock();
-            }
-        
-        private:
-            MutexLock& mutex_;
+        ~MutexLockGuard() {
+            mutex_.unlock();
+        }
+
+    private:
+        MutexLock& mutex_;
     };
 }
 
