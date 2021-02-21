@@ -13,7 +13,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
-namespace muduo {
+namespace duo {
     namespace detail {
 
         struct Transition {
@@ -24,6 +24,7 @@ namespace muduo {
             Transition(time_t t, time_t l, int localIdx)
                 : gmttime(t), localtime(l), localtimeIdx(localIdx) {
             }
+
         };
 
         struct Comp {
@@ -69,7 +70,7 @@ namespace muduo {
     const int kSecondsPerDay = 24 * 60 * 60;
 }
 
-using namespace muduo;
+using namespace duo;
 using namespace std;
 
 struct TimeZone::Data {
@@ -79,7 +80,7 @@ struct TimeZone::Data {
     string abbreviation;
 };
 
-namespace muduo {
+namespace duo {
     namespace detail {
 
         class File : boost::noncopyable {
@@ -190,8 +191,7 @@ namespace muduo {
             if (data.transitions.empty() || comp(sentry, data.transitions.front())) {
                 // FIXME: should be first non dst time zone
                 local = &data.localtimes.front();
-            }
-            else {
+            } else {
                 vector<Transition>::const_iterator transI = lower_bound(data.transitions.begin(),
                     data.transitions.end(),
                     sentry,
@@ -202,8 +202,7 @@ namespace muduo {
                         --transI;
                     }
                     local = &data.localtimes[transI->localtimeIdx];
-                }
-                else {
+                } else {
                     // FIXME: use TZ-env
                     local = &data.localtimes[data.transitions.back().localtimeIdx];
                 }
@@ -215,6 +214,7 @@ namespace muduo {
     }
 }
 
+
 TimeZone::TimeZone(const char* zonefile)
     : data_(new TimeZone::Data) {
     if (!detail::readTimeZoneFile(zonefile, data_.get())) {
@@ -223,9 +223,7 @@ TimeZone::TimeZone(const char* zonefile)
 }
 
 struct tm TimeZone::toLocalTime(time_t seconds) const {
-    struct tm localTime = {
-        0,
-    };
+    struct tm localTime = { 0, };
     assert(data_ != NULL);
     const Data& data(*data_);
 
@@ -253,7 +251,9 @@ time_t TimeZone::fromLocalTime(const struct tm& localTm) const {
     const detail::Localtime* local = findLocaltime(data, sentry, detail::Comp(false));
     if (localTm.tm_isdst) {
         struct tm tryTm = toLocalTime(seconds - local->gmtOffset);
-        if (!tryTm.tm_isdst && tryTm.tm_hour == localTm.tm_hour && tryTm.tm_min == localTm.tm_min) {
+        if (!tryTm.tm_isdst
+            && tryTm.tm_hour == localTm.tm_hour
+            && tryTm.tm_min == localTm.tm_min) {
             // FIXME: HACK
             seconds -= 3600;
         }
@@ -262,9 +262,7 @@ time_t TimeZone::fromLocalTime(const struct tm& localTm) const {
 }
 
 struct tm TimeZone::toUtcTime(time_t secondsSinceEpoch, bool yday) {
-    struct tm utc = {
-        0,
-    };
+    struct tm utc = { 0, };
     utc.tm_zone = "GMT";
     int seconds = secondsSinceEpoch % kSecondsPerDay;
     int days = secondsSinceEpoch / kSecondsPerDay;

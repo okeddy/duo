@@ -9,35 +9,49 @@
 * 作 者：kd
 * 完成日期：2021年2月19日
 */
+#include <iostream>
+#include <vector>
 
-#include "base/ThreadPool.h"
-#include "base/CountDownLatch.h"
+using namespace std;
 
-#include <boost/bind.hpp>
-#include <stdio.h>
-
-void print() {
-    printf("tid=%d\n", duo::CurrentThread::tid());
+int find_ret(int l, int r, vector<int>& nums, int flag) { // flag=1为求max
+    int ret = nums[l];
+    for (l += 1; l <= r; l++) {
+        if (flag) {
+            if (ret < nums[l]) {
+                ret = nums[l];
+            }
+        } else {
+            if (ret > nums[l]) {
+                ret = nums[l];
+            }
+        }
+    }
+    return ret;
 }
-
-void printString(const std::string& str) {
-    printf("tid=%d, str=%s\n", duo::CurrentThread::tid(), str.c_str());
+int longestSubarray(vector<int>& nums, int limit) {
+    int ret = 0, left = 0, right = 0, min_ = nums[0], max_ = min_;
+    int N = nums.size();
+    for (; right < N; right++) {
+        max_ = max(max_, nums[right]);
+        min_ = min(min_, nums[right]);
+        if (max_ - min_ <= limit) {
+            ret = max(ret, right - left + 1);
+        } else {
+            left++;
+            if (max_ == nums[left - 1] || min_ == nums[left - 1]) {
+                max_ = find_ret(left, right, nums, 1);
+                min_ = find_ret(left, right, nums, 0);
+            }
+        }
+    }
+    return ret;
 }
 
 int main() {
-    duo::ThreadPool pool("MainThreadPool");
-    pool.start(5);
-
-    pool.run(print);
-    pool.run(print);
-    for (int i = 0; i < 100; ++i) {
-        char buf[32];
-        snprintf(buf, sizeof buf, "task %d", i);
-        pool.run(boost::bind(printString, std::string(buf)));
-    }
-
-    duo::CountDownLatch latch(1);
-    pool.run(boost::bind(&duo::CountDownLatch::countDown, &latch));
-    latch.wait();
-    pool.stop();
+    vector<int> temp = { 9,10,1,7,9,3,9,9 };
+    cout << longestSubarray(temp, 7);
+    vector<int> temp1(2);
+    
+    return 0;
 }
