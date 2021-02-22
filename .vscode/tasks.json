@@ -18,14 +18,12 @@
                 "isDefault": true
             },
             "command": "make",
-            "args":[
-
-            ]
+            "args": []
         },
         {
             "label": "Build",
             "dependsOrder": "sequence",
-            "dependsOn":[
+            "dependsOn": [
                 "cmake",
                 "make"
             ]
