@@ -19,7 +19,7 @@ namespace duo {
     }
 
     Logger::LogLevel initLogLevel() {
-        if (::getenv("MUDUO_LOG_TRACE"))
+        if (::getenv("DUO_LOG_TRACE"))
             return Logger::TRACE;
         else
             return Logger::DEBUG;
@@ -61,8 +61,11 @@ Logger::Impl::Impl(LogLevel level, int savedErrno, const char* file, int line)
     line_(line),
     fullname_(file),
     basename_(NULL) {
-    const char* path_sep_pos = strrchr(fullname_, '/');
-    basename_ = (path_sep_pos != NULL) ? path_sep_pos + 1 : fullname_;
+    // const char* path_sep_pos = strrchr(fullname_, '/');
+    // basename_ = (path_sep_pos != NULL) ? path_sep_pos + 1 : fullname_;
+
+    // 打印出路径，便于调试和测试
+    basename_ = fullname_;
 
     formatTime();
     Fmt tid("%5d ", CurrentThread::tid());

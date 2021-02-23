@@ -1,16 +1,21 @@
 #include "EventLoop.h"
 
+#include "Channel.h"
+#include "Poller.h"
+
 #include "../base/Logging.h"
 
 #include <assert.h>
-#include <poll.h>
 
 using namespace duo;
 
 __thread EventLoop* t_loopInThisThread = 0;
+const int kPollTimeMs = 10000;
 
 EventLoop::EventLoop()
     : looping_(false),
+    quit_(false),
+    poller_(new Poller(this)),
     threadId_(CurrentThread::tid()) {
     LOG_TRACE << "EventLoop create " << this << " in thread " << threadId_;
     if (t_loopInThisThread) {
@@ -30,11 +35,30 @@ void EventLoop::loop() {
     assert(!looping_);
     assertInLoopThread();
     looping_ = true;
+    quit_ = false;
 
-    ::poll(NULL, 0, 5 * 1000);
+    while (!quit_) {
+        activeChannels_.clear();
+        poller_->poll(kPollTimeMs, &activeChannels_);
+        for (ChannelList::iterator it = activeChannels_.begin();
+            it != activeChannels_.end(); ++it) {
+            (*it)->handleEvent();
+        }
+    }
 
     LOG_TRACE << "EventLoop " << this << " stop looping";
     looping_ = false;
+}
+
+void EventLoop::quit() {
+    quit_ = true;
+    // wakeup();
+}
+
+void EventLoop::updateChannel(Channel* channel) {
+    assert(channel->ownerLoop() == this);
+    assertInLoopThread();
+    poller_->updateChannel(channel);
 }
 
 void EventLoop::abortNotInLoopThread() {

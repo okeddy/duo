@@ -3,7 +3,13 @@
 
 #include "../base/Thread.h"
 
+#include <boost/scoped_ptr.hpp>
+#include <vector>
+
 namespace duo {
+    class Channel;
+    class Poller;
+
     class EventLoop : boost::noncopyable {
     public:
         EventLoop();
@@ -11,8 +17,13 @@ namespace duo {
 
         void loop();
 
+        void quit();
+
+        // internal use only
+        void updateChannel(Channel* channel);
+
         void assertInLoopThread() {
-            if (isInLoopThread()) {
+            if (!isInLoopThread()) {
                 abortNotInLoopThread();
             }
         }
@@ -24,8 +35,13 @@ namespace duo {
     private:
         void abortNotInLoopThread();
 
+        typedef std::vector<Channel*> ChannelList;
+
         bool looping_;  // atomic
+        bool quit_;
         const pid_t threadId_;
+        boost::scoped_ptr<Poller> poller_;
+        ChannelList activeChannels_;
     };
 }
 

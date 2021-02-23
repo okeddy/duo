@@ -14,44 +14,32 @@
 
 using namespace std;
 
-int find_ret(int l, int r, vector<int>& nums, int flag) { // flag=1为求max
-    int ret = nums[l];
-    for (l += 1; l <= r; l++) {
-        if (flag) {
-            if (ret < nums[l]) {
-                ret = nums[l];
-            }
-        } else {
-            if (ret > nums[l]) {
-                ret = nums[l];
-            }
+int maxSatisfied(vector<int>& customers, vector<int>& grumpy, int X) {
+    int total = 0, N = customers.size();
+    for (int i = 0; i < N; i++) {
+        if (!grumpy[i]) {
+            total += customers[i];
         }
     }
-    return ret;
-}
-int longestSubarray(vector<int>& nums, int limit) {
-    int ret = 0, left = 0, right = 0, min_ = nums[0], max_ = min_;
-    int N = nums.size();
-    for (; right < N; right++) {
-        max_ = max(max_, nums[right]);
-        min_ = min(min_, nums[right]);
-        if (max_ - min_ <= limit) {
-            ret = max(ret, right - left + 1);
-        } else {
-            left++;
-            if (max_ == nums[left - 1] || min_ == nums[left - 1]) {
-                max_ = find_ret(left, right, nums, 1);
-                min_ = find_ret(left, right, nums, 0);
-            }
-        }
+
+    int satisfied = 0, max_satisfied = 0;
+    for (int i = 0; i < X; i++) {
+        satisfied += customers[i] * grumpy[i];
     }
-    return ret;
+
+    max_satisfied = satisfied;
+    for (int i = X; i < N; i++) {
+        satisfied = satisfied - customers[i - X] * grumpy[i - X] + customers[i] * grumpy[i];
+        max_satisfied = max(satisfied, max_satisfied);
+    }
+    
+    return total + max_satisfied;
 }
 
 int main() {
-    vector<int> temp = { 9,10,1,7,9,3,9,9 };
-    cout << longestSubarray(temp, 7);
-    vector<int> temp1(2);
+    vector<int> temp1 = { 1,0,1,2,1,1,7,5 };
+    vector<int> temp2 = { 0,1,0,1,0,1,0,1 };
+    cout << maxSatisfied(temp1, temp2, 3);
     
     return 0;
 }
