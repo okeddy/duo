@@ -2,6 +2,7 @@
 
 #include "Channel.h"
 #include "Poller.h"
+#include "TimerQueue.h"
 
 #include "../base/Logging.h"
 
@@ -15,8 +16,9 @@ const int kPollTimeMs = 10000;
 EventLoop::EventLoop()
     : looping_(false),
     quit_(false),
+    threadId_(CurrentThread::tid()),
     poller_(new Poller(this)),
-    threadId_(CurrentThread::tid()) {
+    timerQueue_(new TimerQueue(this)) {
     LOG_TRACE << "EventLoop create " << this << " in thread " << threadId_;
     if (t_loopInThisThread) {
         LOG_FATAL << "Another EventLoop " << t_loopInThisThread
@@ -39,7 +41,7 @@ void EventLoop::loop() {
 
     while (!quit_) {
         activeChannels_.clear();
-        poller_->poll(kPollTimeMs, &activeChannels_);
+        pollReturnTime_ = poller_->poll(kPollTimeMs, &activeChannels_);
         for (ChannelList::iterator it = activeChannels_.begin();
             it != activeChannels_.end(); ++it) {
             (*it)->handleEvent();
@@ -53,6 +55,20 @@ void EventLoop::loop() {
 void EventLoop::quit() {
     quit_ = true;
     // wakeup();
+}
+
+TimerId EventLoop::runAt(const Timestamp& time, const TimerCallback& cb) {
+    return timerQueue_->addTimer(cb, time, 0.0);
+}
+
+TimerId EventLoop::runAfter(double delay, const TimerCallback& cb) {
+    Timestamp time(addTime(Timestamp::now(), delay));
+    return runAt(time, cb);
+}
+
+TimerId EventLoop::runEvery(double interval, const TimerCallback& cb) {
+    Timestamp time(addTime(Timestamp::now(), interval));
+    return timerQueue_->addTimer(cb, time, interval);
 }
 
 void EventLoop::updateChannel(Channel* channel) {

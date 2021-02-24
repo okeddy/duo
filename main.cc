@@ -12,6 +12,8 @@
 #include <iostream>
 #include <vector>
 
+#include <string.h>
+
 using namespace std;
 
 int maxSatisfied(vector<int>& customers, vector<int>& grumpy, int X) {
@@ -37,9 +39,14 @@ int maxSatisfied(vector<int>& customers, vector<int>& grumpy, int X) {
 }
 
 int main() {
-    vector<int> temp1 = { 1,0,1,2,1,1,7,5 };
-    vector<int> temp2 = { 0,1,0,1,0,1,0,1 };
-    cout << maxSatisfied(temp1, temp2, 3);
+    // vector<int> temp1 = { 1,0,1,2,1,1,7,5 };
+    // vector<int> temp2 = { 0,1,0,1,0,1,0,1 };
+    // cout << maxSatisfied(temp1, temp2, 3);
+    struct temp {
+        int a;
+        char c;
+    } temp1;
+    bzero(&temp1, sizeof(struct temp));
     
     return 0;
 }
