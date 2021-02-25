@@ -55,8 +55,11 @@
         "typeinfo": "cpp",
         "strstream": "c",
         "struct_itimerspec.h": "c",
-        "timestamp.h": "c"
+        "timestamp.h": "c",
+        "function.hpp": "c",
+        "endian.h": "c"
     },
     "python.pythonPath": "/usr/bin/python3.6",
-    "C_Cpp.formatting": "vcFormat"
+    "C_Cpp.formatting": "vcFormat",
+    "commentTranslate.targetLanguage": "zh-CN"
 }

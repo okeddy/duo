@@ -9,6 +9,9 @@
 * 作 者：kd
 * 完成日期：2021年2月19日
 */
+
+#include "base/Logging.h"
+
 #include <iostream>
 #include <vector>
 
@@ -39,14 +42,9 @@ int maxSatisfied(vector<int>& customers, vector<int>& grumpy, int X) {
 }
 
 int main() {
-    // vector<int> temp1 = { 1,0,1,2,1,1,7,5 };
-    // vector<int> temp2 = { 0,1,0,1,0,1,0,1 };
-    // cout << maxSatisfied(temp1, temp2, 3);
-    struct temp {
-        int a;
-        char c;
-    } temp1;
-    bzero(&temp1, sizeof(struct temp));
+    vector<int> temp1 = { 1,0,1,2,1,1,7,5 };
+    vector<int> temp2 = { 0,1,0,1,0,1,0,1 };
+    cout << maxSatisfied(temp1, temp2, 3);
     
     return 0;
 }
