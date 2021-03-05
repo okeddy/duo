@@ -20,43 +20,58 @@ namespace duo {
         typedef boost::function<void()> Functor;
 
         EventLoop();
+
+        // force out-line dtor, for scoped_ptr members.
         ~EventLoop();
 
+        ///
+        /// Loops forever.
+        ///
+        /// Must be called in the same thread as creation of the object.
+        ///
         void loop();
 
         void quit();
 
-        // Runs callback immediately in the loop thread.
-        // It wakes up the loop, and run the cb.
-        // If in the same loop thread, cb is run within the function.
-        // Safe to call from other threads.
-        void runInLoop(const Functor& cb);
-        // Queues callback in the loop thread.
-        // Runs after finish pooling.
-        // Safe to call from other threads.
-        void queueInLoop(const Functor& cb);
-
-        // Time when poll returns, usually means data arrivial.
+        ///
+        /// Time when poll returns, usually means data arrivial.
+        ///
         Timestamp pollReturnTime() const { return pollReturnTime_; }
 
-        // timer
-        // Runs callback at "time"
-        // Safe to call from other threads.
+        /// Runs callback immediately in the loop thread.
+        /// It wakes up the loop, and run the cb.
+        /// If in the same loop thread, cb is run within the function.
+        /// Safe to call from other threads.
+        void runInLoop(const Functor& cb);
+        /// Queues callback in the loop thread.
+        /// Runs after finish pooling.
+        /// Safe to call from other threads.
+        void queueInLoop(const Functor& cb);
+
+        // timers
+
+        ///
+        /// Runs callback at 'time'.
+        /// Safe to call from other threads.
+        ///
         TimerId runAt(const Timestamp& time, const TimerCallback& cb);
-
-        // Runs callback after @c delay seconds.
-        // Safe to call from other threads.
+        ///
+        /// Runs callback after @c delay seconds.
+        /// Safe to call from other threads.
+        ///
         TimerId runAfter(double delay, const TimerCallback& cb);
-
-        // Runs callback every @c interval seconds.
-        // Safe to call from other threads.
+        ///
+        /// Runs callback every @c interval seconds.
+        /// Safe to call from other threads.
+        ///
         TimerId runEvery(double interval, const TimerCallback& cb);
 
-        void cancel(TimerId timerId);
+        // void cancel(TimerId timerId);
 
         // internal use only
         void wakeup();
         void updateChannel(Channel* channel);
+        void removeChannel(Channel* channel);
 
         void assertInLoopThread() {
             if (!isInLoopThread()) {
@@ -64,32 +79,30 @@ namespace duo {
             }
         }
 
-        bool isInLoopThread() const {
-            return threadId_ == CurrentThread::tid();
-        }
+        bool isInLoopThread() const { return threadId_ == CurrentThread::tid(); }
 
     private:
+
         void abortNotInLoopThread();
-        void handleRead();  // wake up
+        void handleRead();  // waked up
         void doPendingFunctors();
 
         typedef std::vector<Channel*> ChannelList;
 
-        bool looping_;  // atomic
-        bool quit_;
-        bool callingPendingFunctors_;   // atomic
+        bool looping_; /* atomic */
+        bool quit_; /* atomic */
+        bool callingPendingFunctors_; /* atomic */
         const pid_t threadId_;
         Timestamp pollReturnTime_;
         boost::scoped_ptr<Poller> poller_;
         boost::scoped_ptr<TimerQueue> timerQueue_;
         int wakeupFd_;
-        // 不像定时器队列在内部一样，我们不希望暴露内部通道给外部
+        // unlike in TimerQueue, which is an internal class,
+        // we don't expose Channel to client.
         boost::scoped_ptr<Channel> wakeupChannel_;
         ChannelList activeChannels_;
         MutexLock mutex_;
-
-        // @GuardedBy mutex_
-        std::vector<Functor> pendingFunctors_;
+        std::vector<Functor> pendingFunctors_; // @GuardedBy mutex_
     };
 }
 

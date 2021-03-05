@@ -8,6 +8,9 @@ add_subdirectory(base)
 add_subdirectory(net)
 
 add_executable(duo net/test/TcpConnection_test8.cc)
-#add_executable(duo main.cc)
 
 target_link_libraries(duo duo_base duo_net -pthread)
+
+# add_executable(duo main.cc)
+
+# target_link_libraries(duo)

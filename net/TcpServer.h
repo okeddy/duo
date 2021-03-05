@@ -14,29 +14,32 @@ namespace duo {
 
     class TcpServer : boost::noncopyable {
     public:
+
         TcpServer(EventLoop* loop, const InetAddress& listenAddr);
         ~TcpServer();  // force out-line dtor, for scoped_ptr members.
 
-        // Starts the server if it's not listenning.
-        // It's harmless to call it multiple times.
-        // Thread safe.
+        /// Starts the server if it's not listenning.
+        ///
+        /// It's harmless to call it multiple times.
+        /// Thread safe.
         void start();
 
-        // Set connection callback.
-        // Not thread safe.
+        /// Set connection callback.
+        /// Not thread safe.
         void setConnectionCallback(const ConnectionCallback& cb) {
             connectionCallback_ = cb;
         }
 
-        // Set message callback.
-        // Not thread safe.
+        /// Set message callback.
+        /// Not thread safe.
         void setMessageCallback(const MessageCallback& cb) {
             messageCallback_ = cb;
         }
 
     private:
-        // Not thread safe, but in loop
+        /// Not thread safe, but in loop
         void newConnection(int sockfd, const InetAddress& peerAddr);
+        void removeConnection(const TcpConnectionPtr& conn);
 
         typedef std::map<std::string, TcpConnectionPtr> ConnectionMap;
 

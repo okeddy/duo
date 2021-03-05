@@ -25,7 +25,7 @@ namespace {
         // non-block
         int flags = ::fcntl(sockfd, F_GETFL, 0);
         flags |= O_NONBLOCK;
-        int ret = ::fcntl(sockfd, F_SETFL, flags);
+        int ret = ::fcntl(sockfd, F_SETFL, flags); (void)ret;
 
         // close-on-exec
         flags = ::fcntl(sockfd, F_GETFL, 0);
@@ -138,4 +138,15 @@ struct sockaddr_in sockets::getLocalAddr(int sockfd) {
         LOG_SYSERR << "sockets::getLocalAddr";
     }
     return localAddr;
+}
+
+int sockets::getSocketError(int sockfd) {
+    int optval;
+    socklen_t optlen = sizeof optval;
+
+    if (::getsockopt(sockfd, SOL_SOCKET, SO_ERROR, &optval, &optlen)) {
+        return errno;
+    } else {
+        return optval;
+    }
 }

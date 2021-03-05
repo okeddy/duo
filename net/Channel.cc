@@ -17,7 +17,12 @@ Channel::Channel(EventLoop* loop, int fdArg)
     fd_(fdArg),
     events_(0),
     revents_(0),
-    index_(-1) {
+    index_(-1),
+    eventHanding_(false) {
+}
+
+Channel::~Channel() {
+    assert(!eventHanding_);
 }
 
 void Channel::update() {
@@ -25,10 +30,17 @@ void Channel::update() {
 }
 
 void Channel::handleEvent() {
+    eventHanding_ = true;
     if (revents_ & POLLNVAL) {
+        // POLLNVAL表示套接字文件描述符未打开.关闭()它会是一个错误
         LOG_WARN << "Channel::handel_event() POLLNVAL";
     }
 
+    if ((revents_ && POLLHUP) && !(revents_ & POLLIN)) {
+        // POLLHUP表示套接字不再连接.在TCP中,这意味着FIN已被接收和发送.
+        LOG_WARN << "Channel::handleEvent() POLLHUP";
+        if (closeCallback_) closeCallback_();
+    }
     if (revents_ & (POLLERR | POLLNVAL)) {
         if (errorCallback_) {
             errorCallback_();
@@ -44,4 +56,5 @@ void Channel::handleEvent() {
             writeCallback_();
         }
     }
+    eventHanding_ = false;
 }

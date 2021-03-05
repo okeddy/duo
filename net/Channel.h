@@ -12,6 +12,7 @@ namespace duo {
         typedef boost::function<void()> EventCallback;
 
         Channel(EventLoop* loop, int fd);
+        ~Channel();
 
         void handleEvent();
         void setReadCallback(const EventCallback& cb) {
@@ -22,6 +23,9 @@ namespace duo {
         }
         void setErrorCallback(const EventCallback& cb) {
             errorCallback_ = cb;
+        }
+        void setCloseCallback(const EventCallback& cb) {
+            closeCallback_ = cb;
         }
 
         int fd() const {
@@ -79,9 +83,12 @@ namespace duo {
         int revents_;
         int index_;
 
+        bool eventHanding_;
+
         EventCallback readCallback_;
         EventCallback writeCallback_;
         EventCallback errorCallback_;
+        EventCallback closeCallback_;
     };
 }
 

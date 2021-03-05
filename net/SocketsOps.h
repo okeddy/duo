@@ -43,6 +43,8 @@ namespace duo {
             struct sockaddr_in* addr);
 
         struct sockaddr_in getLocalAddr(int sockfd);
+
+        int getSocketError(int sockfd);
     }
 }
 
