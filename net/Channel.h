@@ -4,18 +4,21 @@
 #include <boost/function.hpp>
 #include <boost/noncopyable.hpp>
 
+#include <../base/Timestamp.h>
+
 namespace duo {
     class EventLoop;
 
     class Channel : boost::noncopyable {
     public:
         typedef boost::function<void()> EventCallback;
+        typedef boost::function<void(Timestamp)> ReadEventCallback;
 
         Channel(EventLoop* loop, int fd);
         ~Channel();
 
-        void handleEvent();
-        void setReadCallback(const EventCallback& cb) {
+        void handleEvent(Timestamp receiveTime);
+        void setReadCallback(const ReadEventCallback& cb) {
             readCallback_ = cb;
         }
         void setWriteCallback(const EventCallback& cb) {
@@ -85,7 +88,7 @@ namespace duo {
 
         bool eventHanding_;
 
-        EventCallback readCallback_;
+        ReadEventCallback readCallback_;
         EventCallback writeCallback_;
         EventCallback errorCallback_;
         EventCallback closeCallback_;

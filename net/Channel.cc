@@ -29,7 +29,7 @@ void Channel::update() {
     loop_->updateChannel(this);
 }
 
-void Channel::handleEvent() {
+void Channel::handleEvent(Timestamp receiveTime) {
     eventHanding_ = true;
     if (revents_ & POLLNVAL) {
         // POLLNVAL表示套接字文件描述符未打开.关闭()它会是一个错误
@@ -48,7 +48,9 @@ void Channel::handleEvent() {
     }
     if (revents_ & (POLLIN | POLLPRI | POLLRDHUP)) {
         if (readCallback_) {
-            readCallback_();
+            if (readCallback_) {
+                readCallback_(receiveTime);
+            }
         }
     }
     if (revents_ & POLLOUT) {

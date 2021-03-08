@@ -153,9 +153,21 @@ int sumRegion(int row1, int col1, int row2, int col2) {
     return sums[row2 + 1][col2 + 1] - sums[row2 + 1][col1] - sums[row1][col2 + 1] + sums[row1][col1];
 }
 
-int main() {
-    string s = "aaabb";
-    cout << longestSubstring(s, 3);
+#include<stdio.h>
 
-    return 0;
+int main()
+{
+float a,b,c,t;
+scanf("%f%f%f",&a,&b,&c);
+if(a>b)
+{
+t=a;a=b;b=t;
+}
+if(a>c){
+t=b;b=c;c=t;
+}
+if(b>c){
+t=c;b=c;c=t;}
+printf ( "%5.2f,%5.2f,%5.2f",a,b,c);
+return 0;
 }

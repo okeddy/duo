@@ -6,12 +6,13 @@
 
 duo::EventLoop* g_loop;
 
-void timeout() {
-    printf("Timeout!\n");
+void timeout(duo::Timestamp receiveTime) {
+    printf("%s Timeout!\n", receiveTime.toFormattedString().c_str());
     g_loop->quit();
 }
 
 int main() {
+    printf("%s started\n", duo::Timestamp::now().toFormattedString().c_str());
     duo::EventLoop loop;
     g_loop = &loop;
 
