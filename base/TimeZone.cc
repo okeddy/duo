@@ -135,8 +135,8 @@ namespace duo {
                     string version = f.readBytes(1);
                     f.readBytes(15);
 
-                    int32_t isgmtcnt = f.readInt32();
-                    int32_t isstdcnt = f.readInt32();
+                    int32_t isgmtcnt = f.readInt32(); (void)isgmtcnt;
+                    int32_t isstdcnt = f.readInt32(); (void)isstdcnt;
                     int32_t leapcnt = f.readInt32();
                     int32_t timecnt = f.readInt32();
                     int32_t typecnt = f.readInt32();
@@ -172,8 +172,8 @@ namespace duo {
 
                     // leapcnt
                     for (int i = 0; i < leapcnt; ++i) {
-                        int32_t leaptime = f.readInt32();
-                        int32_t cumleap = f.readInt32();
+                        int32_t leaptime = f.readInt32(); (void)leaptime;
+                        int32_t cumleap = f.readInt32(); (void)cumleap;
                     }
                     // isstdcnt
                     // isgmtcnt

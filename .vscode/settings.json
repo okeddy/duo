@@ -58,7 +58,11 @@
         "timestamp.h": "c",
         "function.hpp": "c",
         "endian.h": "c",
-        "callbacks.h": "c"
+        "callbacks.h": "c",
+        "condition.h": "c",
+        "thread.h": "c",
+        "ptr_vector.hpp": "c",
+        "numeric": "cpp"
     },
     "python.pythonPath": "/usr/bin/python3.6",
     "C_Cpp.formatting": "vcFormat",

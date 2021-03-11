@@ -3,25 +3,46 @@
 #include "../InetAddress.h"
 #include <stdio.h>
 
+#include "../../base/Logging.h"
+#include "../../base/LogFile.h"
+
 void onConnection(const duo::TcpConnectionPtr& conn) {
     if (conn->connected()) {
-        printf("onConnection(): new connection [%s] from %s\n",
-            conn->name().c_str(),
-            conn->peerAddress().toHostPort().c_str());
+        LOG_INFO << "onConnection(): new connection [" << conn->name().c_str()
+            << "] from " << conn->peerAddress().toHostPort().c_str();
     } else {
-        printf("onConnection(): connection [%s] is down\n",
-            conn->name().c_str());
+        LOG_INFO << "onConnection(): connection [" << conn->name().c_str()
+            << "] is down";
     }
 }
 
 void onMessage(const duo::TcpConnectionPtr& conn,
-    const char* data,
-    ssize_t len) {
-    printf("onMessage(): received %zd bytes from connection [%s]\n",
-        len, conn->name().c_str());
+    duo::Buffer* buf,
+    duo::Timestamp receiveTime) {
+    LOG_INFO << "onMessage(): received " << buf->readableBytes()
+        << " bytes from connection [" << conn->name().c_str()
+        << "] at " << receiveTime.toFormattedString().c_str();
+    LOG_INFO << "onMessage(): [" << buf->retrieveAsString().c_str()
+        << "]";
 }
 
-int main() {
+boost::scoped_ptr<duo::LogFile> g_logFile;
+
+void outputFunc(const char* msg, int len) {
+    g_logFile->append(msg, len);
+}
+
+void flushFunc() {
+    g_logFile->flush();
+}
+
+int main(int argc, char* argv[]) {
+    char name[256];
+    strncpy(name, argv[0], 256);
+    g_logFile.reset(new duo::LogFile(::basename(name), 200 * 1000));
+    duo::Logger::setOutput(outputFunc);
+    duo::Logger::setFlush(flushFunc);
+
     printf("main(): pid = %d\n", getpid());
 
     duo::InetAddress listenAddr("172.17.27.39", 7111);
@@ -30,6 +51,9 @@ int main() {
     duo::TcpServer server(&loop, listenAddr);
     server.setConnectionCallback(onConnection);
     server.setMessageCallback(onMessage);
+    if (argc > 1) {
+        server.setThreadNum(atoi(argv[1]));
+    }
     server.start();
 
     loop.loop();

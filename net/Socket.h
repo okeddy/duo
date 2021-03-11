@@ -31,6 +31,11 @@ namespace duo {
         // Enable/disable SO_REUSEADDR
         void setReuseAddr(bool on);
 
+        void shutdownWrite();
+
+        // Enable/disable TCP_NODELAY (disable/enable Nagle's algorithm).
+        void setTcpNoDelay(bool on);
+
     private:
         const int sockfd_;
     };

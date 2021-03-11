@@ -1,5 +1,5 @@
-#include "../base/Logging.h"
-#include "../base/LogFile.h"
+#include "../Logging.h"
+#include "../LogFile.h"
 
 #include <stdio.h>
 
@@ -50,19 +50,19 @@ int main() {
     LOG_INFO << sizeof(duo::Fmt);
     LOG_INFO << sizeof(duo::LogStream::Buffer);
 
-    bench();
+    // bench();
 
-    char buffer[64 * 1024];
+    // char buffer[64 * 1024];
 
-    g_file = fopen("/dev/null", "w");
-    setbuffer(g_file, buffer, sizeof buffer);
-    bench();
-    fclose(g_file);
+    // g_file = fopen("/dev/null", "w");
+    // setbuffer(g_file, buffer, sizeof buffer);
+    // bench();
+    // fclose(g_file);
 
-    g_file = fopen("/tmp/log", "w");
-    setbuffer(g_file, buffer, sizeof buffer);
-    bench();
-    fclose(g_file);
+    // g_file = fopen("/tmp/log", "w");
+    // setbuffer(g_file, buffer, sizeof buffer);
+    // bench();
+    // fclose(g_file);
 
     g_file = NULL;
     g_logFile.reset(new duo::LogFile("test_log", 500 * 1000 * 1000));

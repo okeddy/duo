@@ -4,7 +4,7 @@
 #include <boost/function.hpp>
 #include <boost/noncopyable.hpp>
 
-#include <../base/Timestamp.h>
+#include "../base/Timestamp.h"
 
 namespace duo {
     class EventLoop;
@@ -59,6 +59,10 @@ namespace duo {
         void disableAll() {
             events_ = kNoneEvent;
             update();
+        }
+
+        bool isWriting() const {
+            return events_ & kWriteEvent;
         }
 
         // for Poller

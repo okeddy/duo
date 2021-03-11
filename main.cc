@@ -11,9 +11,12 @@
 */
 
 #include "base/Logging.h"
+#include "base/LogFile.h"
 
 #include <iostream>
 #include <vector>
+#include <stack>
+#include <numeric>
 
 #include <string.h>
 
@@ -153,21 +156,71 @@ int sumRegion(int row1, int col1, int row2, int col2) {
     return sums[row2 + 1][col2 + 1] - sums[row2 + 1][col1] - sums[row1][col2 + 1] + sums[row1][col1];
 }
 
-#include<stdio.h>
+// int calculate(string s) {
+//     stack<char> ops;
+//     ops.push(1);
+//     int N = s.length(), ret = 0, sign = 1;
 
-int main()
-{
-float a,b,c,t;
-scanf("%f%f%f",&a,&b,&c);
-if(a>b)
-{
-t=a;a=b;b=t;
+//     int i = 0;
+//     while (i < N) {
+//         if (s[i] == ' ') {
+//             ++i;
+//         } else if (s[i] == '+') {
+//             sign = ops.top();
+//             ++i;
+//         } else if (s[i] == '-') {
+//             sign = -ops.top();
+//             ++i;
+//         } else if (s[i] == '(') {
+//             ops.push(sign);
+//             ++i;
+//         } else if (s[i] == ')') {
+//             ops.pop();
+//             ++i;
+//         } else {
+//             long num = 0;
+//             while (i < N && s[i] >= '0' && s[i] <= '9') {
+//                 num = num * 10 + s[i] - '0';
+//                 i++;
+//             }
+//             ret += sign * num;
+//         }
+//     }
+//     return ret;
+// }
+
+int calculate(string s) {
+    vector<int> stk;
+    char preSign = '+';
+    int num = 0;
+    int n = s.length();
+    for (int i = 0; i < n; ++i) {
+        if (isdigit(s[i])) {
+            num = num * 10 + int(s[i] - '0');
+        }
+        if (!isdigit(s[i]) && s[i] != ' ' || i == n - 1) {
+            switch (preSign) {
+            case '+':
+                stk.push_back(num);
+                break;
+            case '-':
+                stk.push_back(-num);
+                break;
+            case '*':
+                stk.back() *= num;
+                break;
+            default:
+                stk.back() /= num;
+            }
+            preSign = s[i];
+            num = 0;
+        }
+    }
+    return accumulate(stk.begin(), stk.end(), 0);
 }
-if(a>c){
-t=b;b=c;c=t;
-}
-if(b>c){
-t=c;b=c;c=t;}
-printf ( "%5.2f,%5.2f,%5.2f",a,b,c);
-return 0;
+
+int main(int argc, char* argv[]) {
+    cout << calculate("2*(1 + 1)") << endl;
+
+    return 0;
 }

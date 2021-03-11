@@ -50,7 +50,7 @@ int sockets::createNonblockingOrDie() {
     }
 #endif
     return sockfd;
-}
+    }
 
 void sockets::bindOrDie(int sockfd, const struct sockaddr_in& addr) {
     int ret = ::bind(sockfd, sockaddr_cast(&addr), sizeof addr);
@@ -110,6 +110,12 @@ int sockets::accept(int sockfd, struct sockaddr_in* addr) {
 void sockets::close(int sockfd) {
     if (::close(sockfd) < 0) {
         LOG_SYSERR << "sockets::close";
+    }
+}
+
+void sockets::shutdownWrite(int sockfd) {
+    if (::shutdown(sockfd, SHUT_WR) < 0) {
+        LOG_SYSERR << "socket::shutdownWrite";
     }
 }
 
